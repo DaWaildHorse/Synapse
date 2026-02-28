@@ -7,9 +7,17 @@ interface NodeProps {
   onClick?: (node: GraphNode) => void;
   onMouseEnter?: (node: GraphNode) => void;
   onMouseLeave?: (node: GraphNode) => void;
+  /** Called when the user presses down on a node to start a drag */
+  onPointerDown?: (node: GraphNode, e: React.PointerEvent) => void;
 }
 
-const Node: React.FC<NodeProps> = ({ node, onClick, onMouseEnter, onMouseLeave }) => {
+const Node: React.FC<NodeProps> = ({
+  node,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  onPointerDown,
+}) => {
   if (node.x === undefined || node.y === undefined) return null;
 
   return (
@@ -20,10 +28,11 @@ const Node: React.FC<NodeProps> = ({ node, onClick, onMouseEnter, onMouseLeave }
       fill={getNodeColor(node.type)}
       stroke="#333"
       strokeWidth={1}
-      onClick={() => onClick && onClick(node)}
-      onMouseEnter={() => onMouseEnter && onMouseEnter(node)}
-      onMouseLeave={() => onMouseLeave && onMouseLeave(node)}
-      style={{ cursor: "pointer" }}
+      onClick={() => onClick?.(node)}
+      onMouseEnter={() => onMouseEnter?.(node)}
+      onMouseLeave={() => onMouseLeave?.(node)}
+      onPointerDown={(e) => onPointerDown?.(node, e)}
+      style={{ cursor: "grab" }}
     />
   );
 };

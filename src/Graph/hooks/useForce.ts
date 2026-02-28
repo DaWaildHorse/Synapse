@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+// src/Graph/hooks/useForce.ts
+import { useEffect, useRef, type RefObject } from "react";
 import * as d3 from "d3";
 import type { GraphNode, GraphLink } from "../types/graph";
-import type { RefObject } from "react";
 
 export function useForceSimulation(
   nodes: GraphNode[],
@@ -9,50 +9,38 @@ export function useForceSimulation(
   width: number,
   height: number,
   onTick: () => void,
-  svgRef: RefObject<SVGSVGElement>
+  svgRef: RefObject<SVGSVGElement | null>
 ) {
+  const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null);
+
   useEffect(() => {
     const simulation = d3
-      .forceSimulation(nodes as d3.SimulationNodeDatum[])
+      .forceSimulation<GraphNode>(nodes)
       .force(
         "link",
         d3
-          .forceLink(links)
-          .id((d: any) => d.id)
-          .distance(120)
+          .forceLink<GraphNode, GraphLink>(links)
+          .id((d) => d.id)
+          .distance(100)
+          // Higher link strength so neighbours spring toward the dragged node — key to the Obsidian feel
+          .strength(0.8)
       )
-      .force("charge", d3.forceManyBody().strength(-250))
+      .force("charge", d3.forceManyBody().strength(-350))
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(40))
+      .force("collision", d3.forceCollide<GraphNode>().radius(32).strength(0.9))
+      // Lower velocityDecay = more momentum / floaty motion (Obsidian default feels ~0.1–0.2)
+      .velocityDecay(0.15)
+      // Slower alphaDecay = simulation stays "warm" longer after interactions
+      .alphaDecay(0.02)
       .on("tick", onTick);
- // Attach drag behavior if SVG ref exists
-    if (svgRef?.current) {
-      const svg = d3.select(svgRef.current);
 
-      svg
-        .selectAll<SVGCircleElement, GraphNode>("circle")
-        .call(
-          d3
-            .drag<SVGCircleElement, GraphNode>()
-            .on("start", (event, d) => {
-              if (!event.active) simulation.alphaTarget(0.3).restart();
-              d.fx = d.x;
-              d.fy = d.y;
-            })
-            .on("drag", (event, d) => {
-              d.fx = event.x;
-              d.fy = event.y;
-            })
-            .on("end", (event, d) => {
-              if (!event.active) simulation.alphaTarget(0);
-              d.fx = null;
-              d.fy = null;
-            })
-        );
-    }
+    simulationRef.current = simulation;
 
     return () => {
       simulation.stop();
+      simulationRef.current = null;
     };
-  }, [nodes, links, width, height, onTick, svgRef]);
+  }, [nodes, links, width, height, onTick]);
+
+  return simulationRef;
 }
