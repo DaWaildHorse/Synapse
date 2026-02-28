@@ -5,6 +5,13 @@
   width: 100%;
   background-color: #FFFFFF;
   color: #B5B5B5;
+  position: relative;
+}
+
+.header,
+.main-content {
+  position: relative;
+  z-index: 1;
 }
 
 .header {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import './HomePage.css';
+import GraphBackground from './GraphBackground';
 
 export default function HomePage() {
   const [message, setMessage] = useState('');
@@ -25,14 +26,15 @@ export default function HomePage() {
 
   return (
     <div className="home-container">
+      <GraphBackground />
       {/* Componente del Menú Lateral */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <header className="header">
         <div className="header-left">
           {/* Botón de Hamburguesa conectado al estado */}
-          <button 
-            className="icon-btn menu-btn" 
+          <button
+            className="icon-btn menu-btn"
             aria-label="Menu"
             onClick={() => setIsSidebarOpen(true)}
           >
@@ -49,7 +51,7 @@ export default function HomePage() {
       </header>
 
       <main className="main-content">
-        <h1 className="main-title"><span>Welcome to Syn</span><span className="highlight">{'{app}'}</span><span>se!</span></h1>
+        <h1 className="main-title"><span>Welcome to Syn</span><span className="highlight">{' {app} '}</span><span>se!</span></h1>
         <p className="subtitle">Less noise, more truth</p>
 
         <div className="input-container">
