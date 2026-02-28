@@ -50,7 +50,7 @@ function storageKeys(query: string) {
 }
 function saveToHistory(query: string) {
   const stored = localStorage.getItem('synapse_history');
-  let history = stored ? JSON.parse(stored) : [];
+  const history = stored ? JSON.parse(stored) : [];
   if (!query || (history.length > 0 && history[0].title === query)) return;
   history.unshift({ id: Date.now().toString(), title: query, timestamp: Date.now() });
   localStorage.setItem('synapse_history', JSON.stringify(history));
@@ -80,16 +80,6 @@ const CircularProgress = ({ percentage, label }: { percentage: number; label: st
     </div>
   );
 };
-
-// ── Section helper ────────────────────────────────────────────────────────────
-
-const Section = ({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) => (
-  <div className={`flex flex-col gap-2 ${className ?? ''}`}>
-    <p className="text-xs font-semibold tracking-widest uppercase text-slate-500 m-0">{title}</p>
-    {children}
-  </div>
-);
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function ResultsPage() {
