@@ -92,6 +92,12 @@
   padding: 8px 12px;
   gap: 8px;
   background-color: #FFFFFF;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-container:focus-within {
+  border-color: #4A9EFF;
+  box-shadow: 0 0 12px rgba(74, 158, 255, 0.4);
 }
 
 .message-input {
