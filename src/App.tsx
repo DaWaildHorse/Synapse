@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import Graph from "./Graph/components/Graph";
+import type { GraphNode, GraphLink } from "./Graph/types/graph";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  // Sample nodes
+  const nodes: GraphNode[] = [
+    { id: "claim1", type: "claim" },
+    { id: "claim2", type: "claim" },
+    { id: "sourceA", type: "source" },
+    { id: "sourceB", type: "source" },
+    { id: "entity1", type: "entity" },
+  ];
+
+  // Sample links
+  const links: GraphLink[] = [
+    { source: "sourceA", target: "claim1", type: "MAKES" },
+    { source: "sourceB", target: "claim2", type: "MAKES" },
+    { source: "claim1", target: "entity1", type: "MENTIONS" },
+    { source: "claim2", target: "entity1", type: "MENTIONS" },
+    { source: "claim1", target: "claim2", type: "CONTRADICTS" },
+  ];
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ width: "100vw", height: "100vh" }}>
+      <h1 style={{ textAlign: "center" }}>Graph View</h1>
+      <Graph nodes={nodes} links={links} width={1200} height={800} />
+    </div>
+  );
+};
 
-export default App
+export default App;
