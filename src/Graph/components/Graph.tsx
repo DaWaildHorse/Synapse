@@ -27,7 +27,7 @@ const Graph: React.FC<GraphProps> = ({ nodes, links, width = 1000, height = 800,
   } | null>(null);
 
   const handleTick = useCallback(() => setTick((t) => t + 1), []);
-  const simulationRef = useForceSimulation(nodes, links, width, height, handleTick, svgRef);
+  const simulationRef = useForceSimulation(nodes, links, width, height, handleTick);
 
   useEffect(() => {
     if (!svgRef.current || !gRef.current) return;

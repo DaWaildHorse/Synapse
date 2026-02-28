@@ -4,12 +4,11 @@ import * as d3 from "d3";
 import type { GraphNode, GraphLink } from "../types/graph";
 
 export function useForceSimulation(
-  nodes: GraphNode[],
-  links: GraphLink[],
-  width: number,
-  height: number,
-  onTick: () => void
-) {
+    nodes: GraphNode[],
+    links: GraphLink[],
+    width: number,
+    height: number,
+    onTick: () => void) {
   const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null);
 
   useEffect(() => {
@@ -21,7 +20,7 @@ export function useForceSimulation(
           .forceLink<GraphNode, GraphLink>(links)
           .id((d) => d.id)
           .distance(80)
-          // Higher link strength so neighbours spring toward the dragged node — key to the Obsidian feel
+          // Higher link strength so neighbors spring toward the dragged node — key to the Obsidian feel
           .strength(0.8)
       )
       .force("charge", d3.forceManyBody().strength(-350))
