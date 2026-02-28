@@ -12,8 +12,8 @@ export default function HomePage() {
   const handleSend = () => {
     if (message.trim()) {
       console.log('Sending:', message);
-      setMessage('');
-      navigate('/results');
+      // Pasamos la búsqueda a la vista de resultados
+      navigate('/results', { state: { query: message.trim() } });
     }
   };
 
@@ -27,12 +27,10 @@ export default function HomePage() {
   return (
     <div className="home-container">
       <GraphBackground />
-      {/* Componente del Menú Lateral */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <header className="header">
         <div className="header-left">
-          {/* Botón de Hamburguesa conectado al estado */}
           <button
             className="icon-btn menu-btn"
             aria-label="Menu"

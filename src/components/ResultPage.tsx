@@ -1,41 +1,81 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import GraphBackground from './GraphBackground';
+import { analyzeInformation } from '../services/geminiService'; // Importamos el servicio
 import './ResultsPage.css';
+import './HomePage.css';
 
-// Componente auxiliar para los anillos de progreso
-const CircularProgress = ({ percentage }: { percentage: number }) => {
+// --- INTERFACES ---
+interface NodeData { id: string; label: string; type: 'claim' | 'source' | 'entity'; confidence?: number; }
+interface LinkData { source: string; target: string; type: 'MAKES' | 'SUPPORTS' | 'CONTRADICTS' | 'MENTIONS'; }
+interface GraphData { nodes: NodeData[]; links: LinkData[]; }
+interface SummaryData { summary: string; details: string; keyFacts: string[]; relatedTopics: string[]; }
+interface AnalysisResult { graph: GraphData; analysis: SummaryData; metrics: { veracity: number; agree: number; disagree: number; neutral: number; }; }
+
+const CircularProgress = ({ percentage, label }: { percentage: number, label: string }) => {
   const radius = 24;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="progress-ring-container">
-      <svg className="progress-ring" width="60" height="60">
-        <circle stroke="#E0E0E0" strokeWidth="4" fill="transparent" r={radius} cx="30" cy="30" />
-        <circle
-          stroke="#4A9EFF"
-          strokeWidth="4"
-          fill="transparent"
-          r={radius}
-          cx="30"
-          cy="30"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-        />
-      </svg>
-      <span className="progress-text">{percentage}%</span>
+    <div className="flex flex-col items-center gap-2">
+      <div className="progress-ring-container">
+        <svg className="progress-ring" width="60" height="60">
+          <circle stroke="#E0E0E0" strokeWidth="4" fill="transparent" r={radius} cx="30" cy="30" />
+          <circle
+            stroke="#4A9EFF"
+            strokeWidth="4"
+            fill="transparent"
+            r={radius}
+            cx="30"
+            cy="30"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            style={{ transition: 'stroke-dashoffset 1s ease-in-out' }}
+          />
+        </svg>
+        <span className="progress-text font-semibold">{percentage}%</span>
+      </div>
+      <span className="text-xs text-gray-500 text-center max-w-[80px] leading-tight" style={{ color: '#B5B5B5' }}>{label}</span>
     </div>
   );
 };
 
 export default function ResultsPage() {
+  const location = useLocation();
   const [message, setMessage] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [resultData, setResultData] = useState<AnalysisResult | null>(null);
+
+  // Ejecutamos el análisis cuando el componente carga con una búsqueda inicial
+  useEffect(() => {
+    const initialQuery = location.state?.query;
+    if (initialQuery) {
+      executeSearch(initialQuery);
+    } else {
+      setIsLoading(false); // Por si entran directamente sin buscar nada
+    }
+  }, [location.state]);
+
+  const executeSearch = async (query: string) => {
+    setIsLoading(true);
+    try {
+      const data = await analyzeInformation(query);
+      setResultData(data);
+    } catch (error) {
+      console.error("Falló la llamada a la API", error);
+      // Opcional: Manejar el estado de error en UI
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSend = () => {
     if (message.trim()) {
-      console.log('Searching new URL:', message);
+      executeSearch(message.trim());
       setMessage('');
     }
   };
@@ -48,83 +88,116 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="results-container">
-      {/* Componente del Menú Lateral Desplegable */}
+    <div className="home-container results-container">
+      <GraphBackground blurAmount={3} />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      {/* Main Content */}
-      <main className="results-main">
-        {/* Logo Header con el botón de hamburguesa */}
-        <header className="results-header" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button 
-            className="icon-btn menu-btn" 
-            aria-label="Menu"
-            onClick={() => setIsSidebarOpen(true)}
-            style={{ padding: 0 }}
-          >
+      <header className="header">
+        <div className="header-left">
+          <button className="icon-btn menu-btn" aria-label="Menu" onClick={() => setIsSidebarOpen(true)}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A9EFF" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <div className="app-logo-small">
+          <div className="app-logo">
             <img src="/app-logo.png" alt="App Logo" />
           </div>
-        </header>
+        </div>
+      </header>
 
+      <main className="results-main">
         <div className="content-grid">
-          {/* Left Column: Summary */}
-          <section className="summary-section">
+          
+          <section className="summary-section" style={{ zIndex: 1, backgroundColor: 'rgba(255,255,255,0.85)', padding: '20px', borderRadius: '16px', backdropFilter: 'blur(10px)' }}>
             <h2 className="summary-title">Summary</h2>
-            <div className="skeleton-text">
-              <div className="skeleton-line w-40"></div>
-              <div className="skeleton-line w-100 mt-lg"></div>
-              <div className="skeleton-line w-80"></div>
-              <div className="skeleton-line w-80"></div>
-              <div className="skeleton-line w-60 mt-lg"></div>
-              <div className="skeleton-line w-50"></div>
-              <div className="skeleton-line w-100 mt-lg"></div>
-              <div className="skeleton-line w-60"></div>
-              <div className="skeleton-line w-100 mt-lg"></div>
-              <div className="skeleton-line w-40"></div>
-              <div className="skeleton-line w-100 mt-lg"></div>
-              <div className="skeleton-line w-100"></div>
-            </div>
+            
+            {isLoading ? (
+              <div className="skeleton-text">
+                <div className="skeleton-line w-40"></div>
+                <div className="skeleton-line w-100 mt-lg"></div>
+                <div className="skeleton-line w-80"></div>
+                <div className="skeleton-line w-80"></div>
+                <div className="skeleton-line w-60 mt-lg"></div>
+                <div className="skeleton-line w-50"></div>
+              </div>
+            ) : resultData ? (
+              <div className="real-content flex flex-col gap-6" style={{ color: '#4A4A4A' }}>
+                <div>
+                  <h3 style={{ color: '#4A9EFF', marginBottom: '8px', fontSize: '1.2rem' }}>Overview</h3>
+                  <p>{resultData.analysis.summary}</p>
+                </div>
+                <div>
+                  <h3 style={{ color: '#4A9EFF', marginBottom: '8px', fontSize: '1.2rem' }}>Details</h3>
+                  <p>{resultData.analysis.details}</p>
+                </div>
+                <div>
+                  <h3 style={{ color: '#4A9EFF', marginBottom: '8px', fontSize: '1.2rem' }}>Key Facts</h3>
+                  <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }}>
+                    {resultData.analysis.keyFacts.map((fact, index) => (
+                      <li key={index} style={{ marginBottom: '4px' }}>{fact}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 style={{ color: '#4A9EFF', marginBottom: '8px', fontSize: '1.2rem' }}>Related Topics</h3>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                     {resultData.analysis.relatedTopics.map((topic, index) => (
+                       <span key={index} style={{ backgroundColor: '#E0E0E0', padding: '4px 12px', borderRadius: '16px', fontSize: '0.9rem' }}>
+                         {topic}
+                       </span>
+                     ))}
+                  </div>
+                </div>
+              </div>
+            ) : <p style={{ color: '#B5B5B5' }}>Sin resultados. Ingresa un enlace abajo.</p>}
           </section>
 
-          {/* Right Column: Metrics & Graph */}
-          <section className="visual-section">
-            <div className="metrics-container">
-              <CircularProgress percentage={20} />
-              <CircularProgress percentage={40} />
-              <CircularProgress percentage={12} />
-              <CircularProgress percentage={90} />
+          <section className="visual-section" style={{ zIndex: 1 }}>
+            <div className="metrics-container" style={{ backgroundColor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)', padding: '20px 10px', display: 'flex', justifyContent: 'space-around' }}>
+               {isLoading ? (
+                  <>
+                    <CircularProgress percentage={0} label="Veracidad" />
+                    <CircularProgress percentage={0} label="Acuerdo" />
+                    <CircularProgress percentage={0} label="Desacuerdo" />
+                    <CircularProgress percentage={0} label="Neutro" />
+                  </>
+               ) : resultData ? (
+                 <>
+                    <CircularProgress percentage={resultData.metrics.veracity} label="Veracidad" />
+                    <CircularProgress percentage={resultData.metrics.agree} label="Acuerdo" />
+                    <CircularProgress percentage={resultData.metrics.disagree} label="Desacuerdo" />
+                    <CircularProgress percentage={resultData.metrics.neutral} label="Neutro" />
+                 </>
+               ) : null}
             </div>
 
-            <div className="graph-container">
-              {/* Aquí irá tu canvas del grafo de nodos */}
+            <div className="graph-container" style={{ backgroundColor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)' }}>
               <div className="graph-placeholder">
-                 <span style={{ color: '#B5B5B5' }}>[Graph Visualization Area]</span>
+                 <span style={{ color: '#B5B5B5' }}>
+                   {isLoading ? 'Analizando información con Syn{app}se...' : 
+                    resultData ? `Se extrajeron ${resultData.graph.nodes.length} nodos. [Espacio para renderizar el grafo interactivo]` 
+                    : '[Graph Visualization Area]'}
+                 </span>
               </div>
             </div>
           </section>
         </div>
 
-        {/* Bottom Search Input */}
         <div className="bottom-input-wrapper">
-          <div className="input-container results-input-container">
-            <input
-              type="text"
+          <div className="input-container" style={{ maxWidth: '800px', width: '100%', margin: '0 auto', zIndex: 2 }}>
+            <textarea
               className="message-input"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="| Paste here your url"
+              placeholder="Paste here your url..."
+              rows={1}
             />
             <div className="input-actions">
               <button className="icon-btn send-btn" onClick={handleSend} aria-label="Send message">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="22" y1="2" x2="11" y2="13" />
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>

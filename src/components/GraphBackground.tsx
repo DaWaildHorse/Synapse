@@ -8,7 +8,13 @@ interface Node {
   r: number;
 }
 
-export default function GraphBackground() {
+// 1. Definimos las Props que aceptará el componente
+interface GraphBackgroundProps {
+  blurAmount?: number; // Es opcional. Si no se manda, será 0.
+}
+
+// 2. Recibimos la prop en el componente con un valor por defecto de 0
+export default function GraphBackground({ blurAmount = 0 }: GraphBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const nodesRef = useRef<Node[]>([]);
@@ -135,7 +141,7 @@ export default function GraphBackground() {
         left: 0,
         width: '100%',
         height: '100%',
-        filter: 'blur(0px)',
+        filter: `blur(${blurAmount}px)`, // 3. Aplicamos la prop aquí
         opacity: 1.0,
         pointerEvents: 'none',
         zIndex: 0,
