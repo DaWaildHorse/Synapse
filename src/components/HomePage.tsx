@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
 export default function HomePage() {
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSend = () => {
     if (message.trim()) {
@@ -14,7 +16,7 @@ export default function HomePage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      navigate('/results');
     }
   };
 

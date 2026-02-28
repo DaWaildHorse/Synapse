@@ -1,0 +1,157 @@
+.results-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #FFFFFF;
+  font-family: inherit;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background-color: #4A9EFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  gap: 32px;
+}
+
+.history-btn {
+  background-color: transparent;
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+  border-radius: 20px;
+  padding: 8px 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 90%;
+}
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.sidebar-skeleton {
+  height: 16px;
+  background-color: #FFFFFF;
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* Main Content Area */
+.results-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 40px;
+  position: relative;
+}
+
+.results-header {
+  margin-bottom: 24px;
+}
+
+.app-logo-small img {
+  height: 60px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px; /* Espacio para el input de abajo */
+}
+
+/* Summary Section */
+.summary-title {
+  color: #B5B5B5;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 32px;
+}
+
+.skeleton-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-line {
+  height: 18px;
+  background-color: #E0E0E0;
+  border-radius: 4px;
+}
+
+.w-100 { width: 100%; }
+.w-80 { width: 80%; }
+.w-60 { width: 60%; }
+.w-50 { width: 50%; }
+.w-40 { width: 40%; }
+.mt-lg { margin-top: 16px; }
+
+/* Visual Section (Right Column) */
+.visual-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.metrics-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border: 4px solid #4A9EFF;
+  border-radius: 40px;
+  padding: 16px;
+}
+
+.progress-ring-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-text {
+  position: absolute;
+  color: #B5B5B5;
+  font-size: 0.9rem;
+}
+
+.graph-container {
+  flex: 1;
+  border: 4px solid #4A9EFF;
+  border-radius: 24px;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bottom Input Area */
+.bottom-input-wrapper {
+  position: absolute;
+  bottom: 24px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.results-input-container {
+  border: 4px solid #4A9EFF;
+  border-radius: 30px;
+  padding: 12px 24px;
+  max-width: 800px;
+}
