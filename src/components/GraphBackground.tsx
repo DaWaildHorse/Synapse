@@ -10,12 +10,13 @@ interface Node {
 
 // 1. Definimos las Props que aceptará el componente
 interface GraphBackgroundProps {
-  blurAmount?: number; // Es opcional. Si no se manda, será 0.
+  blurAmount?: number;
   onMaxConnectionsChange?: (max: number) => void;
+  nodeCount?: number;
 }
 
 // 2. Recibimos la prop en el componente con un valor por defecto de 0
-export default function GraphBackground({ blurAmount = 0, onMaxConnectionsChange }: GraphBackgroundProps) {
+export default function GraphBackground({ blurAmount = 0, onMaxConnectionsChange, nodeCount = 100 }: GraphBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const nodesRef = useRef<Node[]>([]);
@@ -30,8 +31,7 @@ export default function GraphBackground({ blurAmount = 0, onMaxConnectionsChange
       canvas.height = window.innerHeight;
     };
 
-    const initNodes = () => {
-      const count = 100;
+    const initNodes = (count: number) => {
       nodesRef.current = Array.from({ length: count }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -124,7 +124,7 @@ export default function GraphBackground({ blurAmount = 0, onMaxConnectionsChange
     };
 
     resize();
-    initNodes();
+    initNodes(nodeCount);
     draw();
 
     window.addEventListener('resize', resize);
@@ -135,7 +135,7 @@ export default function GraphBackground({ blurAmount = 0, onMaxConnectionsChange
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  }, [nodeCount]);
 
   return (
     <canvas
