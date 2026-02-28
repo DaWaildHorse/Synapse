@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Sidebar from './Sidebar';
 import './ResultsPage.css';
 
 // Componente auxiliar para los anillos de progreso
@@ -30,6 +31,7 @@ const CircularProgress = ({ percentage }: { percentage: number }) => {
 
 export default function ResultsPage() {
   const [message, setMessage] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSend = () => {
     if (message.trim()) {
@@ -47,20 +49,25 @@ export default function ResultsPage() {
 
   return (
     <div className="results-container">
-      {/* Sidebar Historial */}
-      <aside className="sidebar">
-        <button className="history-btn">Historial</button>
-        <div className="skeleton-list">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="skeleton-item sidebar-skeleton" />
-          ))}
-        </div>
-      </aside>
+      {/* Componente del Menú Lateral Desplegable */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       {/* Main Content */}
       <main className="results-main">
-        {/* Logo Header */}
-        <header className="results-header">
+        {/* Logo Header con el botón de hamburguesa */}
+        <header className="results-header" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button 
+            className="icon-btn menu-btn" 
+            aria-label="Menu"
+            onClick={() => setIsSidebarOpen(true)}
+            style={{ padding: 0 }}
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A9EFF" strokeWidth="2">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
           <div className="app-logo-small">
             <img src="/app-logo.png" alt="App Logo" />
           </div>

@@ -1,0 +1,30 @@
+.sidebar-overlay-menu {
+  position: fixed;
+  top: 0;
+  left: -300px; /* Oculto por defecto */
+  width: 260px;
+  height: 100vh;
+  background-color: #4A9EFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  gap: 32px;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.sidebar-overlay-menu.open {
+  left: 0; /* Aparece suavemente */
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}

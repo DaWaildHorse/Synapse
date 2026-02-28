@@ -1,30 +1,41 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from './Sidebar';
 import './HomePage.css';
 
 export default function HomePage() {
   const [message, setMessage] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSend = () => {
     if (message.trim()) {
       console.log('Sending:', message);
       setMessage('');
+      navigate('/results');
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      navigate('/results');
+      handleSend();
     }
   };
 
   return (
     <div className="home-container">
+      {/* Componente del Menú Lateral */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
       <header className="header">
         <div className="header-left">
-          <button className="icon-btn menu-btn" aria-label="Menu">
+          {/* Botón de Hamburguesa conectado al estado */}
+          <button 
+            className="icon-btn menu-btn" 
+            aria-label="Menu"
+            onClick={() => setIsSidebarOpen(true)}
+          >
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A9EFF" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="12" x2="21" y2="12" />
@@ -32,7 +43,6 @@ export default function HomePage() {
             </svg>
           </button>
           <div className="app-logo">
-            {/* Replace with your app icon */}
             <img src="/app-logo.png" alt="App Logo" />
           </div>
         </div>
