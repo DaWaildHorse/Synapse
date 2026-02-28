@@ -19,24 +19,6 @@ const CircularProgress = ({ percentage, label }: { percentage: number, label: st
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 // Función auxiliar para guardar en caché
-
-const saveToHistory = (query: string) => {
-  const stored = localStorage.getItem('synapse_history');
-  let history = stored ? JSON.parse(stored) : [];
-
-  // Evitamos guardar búsquedas vacías o exactamente iguales a la última
-  if (!query || (history.length > 0 && history[0].title === query)) return;
-
-  const newItem = {
-    id: Date.now().toString(),
-    title: query,
-    timestamp: Date.now()
-  };
-
-  history.unshift(newItem); // Colocamos la búsqueda más reciente al inicio
-  localStorage.setItem('synapse_history', JSON.stringify(history));
-};
-
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="progress-ring-container">

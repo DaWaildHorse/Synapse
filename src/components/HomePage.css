@@ -188,3 +188,16 @@
     transform: translateX(-50%);
   }
 }
+
+.graph-stat {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(74, 158, 255, 0.1);
+  color: #4A9EFF;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 10;
+}

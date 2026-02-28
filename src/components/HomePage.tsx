@@ -10,6 +10,7 @@ export default function HomePage() {
   const [error, setError] = useState('');
   const [shake, setShake] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [maxConnections, setMaxConnections] = useState(0);
   const navigate = useNavigate();
 
   const isValidUrl = (str: string) => {
@@ -67,7 +68,8 @@ export default function HomePage() {
 
   return (
     <div className="home-container">
-      <GraphBackground />
+      <GraphBackground onMaxConnectionsChange={setMaxConnections} />
+      <div className="graph-stat">{maxConnections}</div>
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <header className="header">

@@ -11,10 +11,11 @@ interface Node {
 // 1. Definimos las Props que aceptará el componente
 interface GraphBackgroundProps {
   blurAmount?: number; // Es opcional. Si no se manda, será 0.
+  onMaxConnectionsChange?: (max: number) => void;
 }
 
 // 2. Recibimos la prop en el componente con un valor por defecto de 0
-export default function GraphBackground({ blurAmount = 0 }: GraphBackgroundProps) {
+export default function GraphBackground({ blurAmount = 0, onMaxConnectionsChange }: GraphBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const nodesRef = useRef<Node[]>([]);
@@ -86,7 +87,8 @@ export default function GraphBackground({ blurAmount = 0 }: GraphBackgroundProps
         }
       }
 
-      // Draw edges
+      // Draw edges and count connections
+      const connectionCounts = new Array(nodes.length).fill(0);
       ctx.strokeStyle = 'rgba(74, 158, 255, 0.15)';
       ctx.lineWidth = 1;
       for (let i = 0; i < nodes.length; i++) {
@@ -95,6 +97,8 @@ export default function GraphBackground({ blurAmount = 0 }: GraphBackgroundProps
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 150) {
+            connectionCounts[i]++;
+            connectionCounts[j]++;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -102,6 +106,7 @@ export default function GraphBackground({ blurAmount = 0 }: GraphBackgroundProps
           }
         }
       }
+      onMaxConnectionsChange?.(Math.max(...connectionCounts));
 
       // Draw nodes
       ctx.fillStyle = 'rgba(74, 158, 255, 0.3)';
