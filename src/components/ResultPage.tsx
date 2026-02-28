@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import GraphBackground from './GraphBackground';
 import { analyzeInformation } from '../services/geminiService';
@@ -22,7 +22,7 @@ const CircularProgress = ({ percentage, label }: { percentage: number, label: st
 const saveToHistory = (query: string) => {
   const stored = localStorage.getItem('synapse_history');
   let history = stored ? JSON.parse(stored) : [];
-  
+
   // Evitamos guardar búsquedas vacías o exactamente iguales a la última
   if (!query || (history.length > 0 && history[0].title === query)) return;
 
@@ -31,7 +31,7 @@ const saveToHistory = (query: string) => {
     title: query,
     timestamp: Date.now()
   };
-  
+
   history.unshift(newItem); // Colocamos la búsqueda más reciente al inicio
   localStorage.setItem('synapse_history', JSON.stringify(history));
 };
@@ -63,6 +63,7 @@ const saveToHistory = (query: string) => {
 
 export default function ResultsPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,6 +81,7 @@ export default function ResultsPage() {
   const executeSearch = async (query: string) => {
     setIsLoading(true);
     try {
+      await new Promise(resolve => setTimeout(resolve, 300000)); // 3s delay for animation testing
       const data = await analyzeInformation(query);
       setResultData(data);
     } catch (error) {
@@ -107,7 +109,7 @@ export default function ResultsPage() {
   // Filtramos los nodos que son 'source' y revisamos cómo se conectan al claim principal.
   const getSources = (type: 'SUPPORTS' | 'CONTRADICTS') => {
     if (!resultData) return [];
-    
+
     // 1. Encontrar los IDs de los enlaces (links) del tipo deseado
     const linksOfType = resultData.graph.links.filter(link => link.type === type);
     const sourceIds = linksOfType.map(link => link.source);
@@ -135,7 +137,7 @@ export default function ResultsPage() {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <div className="app-logo">
+          <div className="app-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
             <img src="/app-logo.png" alt="App Logo" />
           </div>
         </div>
@@ -149,12 +151,21 @@ export default function ResultsPage() {
             
             {isLoading ? (
               <div className="skeleton-text">
-                <div className="skeleton-line w-40"></div>
-                <div className="skeleton-line w-100 mt-lg"></div>
-                <div className="skeleton-line w-80"></div>
-                <div className="skeleton-line w-80"></div>
-                <div className="skeleton-line w-60 mt-lg"></div>
-                <div className="skeleton-line w-50"></div>
+                <div className="skeleton-line w-40" style={{ animationDelay: '0s' }}></div>
+                <div className="skeleton-line w-100 mt-lg" style={{ animationDelay: '0.1s' }}></div>
+                <div className="skeleton-line w-80" style={{ animationDelay: '0.2s' }}></div>
+                <div className="skeleton-line w-80" style={{ animationDelay: '0.3s' }}></div>
+                <div className="skeleton-line w-60 mt-lg" style={{ animationDelay: '0.4s' }}></div>
+                <div className="skeleton-line w-50" style={{ animationDelay: '0.5s' }}></div>
+                <div className="skeleton-line w-40 mt-lg" style={{ animationDelay: '0.6s' }}></div>
+                <div className="skeleton-line w-100" style={{ animationDelay: '0.7s' }}></div>
+                <div className="skeleton-line w-80" style={{ animationDelay: '0.8s' }}></div>
+                <div className="skeleton-line w-60" style={{ animationDelay: '0.9s' }}></div>
+                <div className="skeleton-line w-50 mt-lg" style={{ animationDelay: '1s' }}></div>
+                <div className="skeleton-line w-80" style={{ animationDelay: '1.1s' }}></div>
+                <div className="skeleton-line w-60" style={{ animationDelay: '1.2s' }}></div>
+                <div className="skeleton-line w-100 mt-lg" style={{ animationDelay: '1.3s' }}></div>
+                <div className="skeleton-line w-50" style={{ animationDelay: '1.4s' }}></div>
               </div>
             ) : resultData ? (
               <div className="real-content flex flex-col gap-6" style={{ color: '#4A4A4A' }}>
@@ -224,17 +235,17 @@ export default function ResultsPage() {
             <div className="metrics-container" style={{ backgroundColor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)', padding: '20px 10px', display: 'flex', justifyContent: 'space-around' }}>
                {isLoading ? (
                   <>
-                    <CircularProgress percentage={0} label="Veracidad" />
-                    <CircularProgress percentage={0} label="Acuerdo" />
-                    <CircularProgress percentage={0} label="Desacuerdo" />
-                    <CircularProgress percentage={0} label="Neutro" />
+                    <CircularProgress percentage={0} label="Veracity" />
+                    <CircularProgress percentage={0} label="Agree" />
+                    <CircularProgress percentage={0} label="Disagree" />
+                    <CircularProgress percentage={0} label="Neutral" />
                   </>
                ) : resultData ? (
                  <>
-                    <CircularProgress percentage={resultData.metrics.veracity} label="Veracidad" />
-                    <CircularProgress percentage={resultData.metrics.agree} label="Acuerdo" />
-                    <CircularProgress percentage={resultData.metrics.disagree} label="Desacuerdo" />
-                    <CircularProgress percentage={resultData.metrics.neutral} label="Neutro" />
+                    <CircularProgress percentage={resultData.metrics.veracity} label="Veracity" />
+                    <CircularProgress percentage={resultData.metrics.agree} label="Agree" />
+                    <CircularProgress percentage={resultData.metrics.disagree} label="Disagree" />
+                    <CircularProgress percentage={resultData.metrics.neutral} label="Neutral" />
                  </>
                ) : null}
             </div>

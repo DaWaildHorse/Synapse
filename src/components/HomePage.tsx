@@ -9,6 +9,7 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [error, setError] = useState('');
   const [shake, setShake] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const navigate = useNavigate();
 
   const isValidUrl = (str: string) => {
@@ -24,7 +25,7 @@ export default function HomePage() {
   const saveToHistory = (query: string) => {
   const stored = localStorage.getItem('synapse_history');
   let history = stored ? JSON.parse(stored) : [];
-  
+
   // Evitamos guardar búsquedas vacías o exactamente iguales a la última
   if (!query || (history.length > 0 && history[0].title === query)) return;
 
@@ -33,7 +34,7 @@ export default function HomePage() {
     title: query,
     timestamp: Date.now()
   };
-  
+
   history.unshift(newItem); // Colocamos la búsqueda más reciente al inicio
   localStorage.setItem('synapse_history', JSON.stringify(history));
 };
@@ -50,7 +51,10 @@ export default function HomePage() {
     console.log('Sending:', message);
     saveToHistory(message.trim());
     setMessage('');
-    navigate('/results', { state: { query: message.trim() } });
+    const query = message.trim();
+    setIsExiting(true);
+    setTimeout(() => {
+        navigate('/results', { state: { query } });}, 500);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -78,17 +82,19 @@ export default function HomePage() {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <div className="app-logo">
+          <div className="app-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
             <img src="/app-logo.png" alt="App Logo" />
           </div>
         </div>
       </header>
 
       <main className="main-content">
-        <h1 className="main-title"><span>Welcome to Syn</span><span className="highlight">{' {app} '}</span><span>se!</span></h1>
-        <p className="subtitle">Less noise, more truth</p>
+        <div className={`hero-content${isExiting ? ' exiting' : ''}`}>
+          <h1 className="main-title"><span>Welcome to Syn</span><span className="highlight">{' {app} '}</span><span>se!</span></h1>
+          <p className="subtitle">Less noise, more truth</p>
+        </div>
 
-        <div className={`input-container${shake ? ' shake' : ''}`}>
+        <div className={`input-container${shake ? ' shake' : ''}${isExiting ? ' to-bottom' : ''}`}>
           <textarea
             className="message-input"
             value={message}
@@ -114,7 +120,7 @@ export default function HomePage() {
             </button>
           </div>
         </div>
-        {error && <p className="error-message">{error}</p>}
+        {error && !isExiting && <p className="error-message">{error}</p>}
       </main>
       
       <footer className="home-footer">

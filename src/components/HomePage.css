@@ -155,3 +155,36 @@
 .home-footer .highlight {
   color: #4A9EFF;
 }
+
+/* Transition animations */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.hero-content.exiting {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.input-container.to-bottom {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 800px;
+  animation: moveToBottom 0.5s ease-out forwards;
+}
+
+@keyframes moveToBottom {
+  from {
+    bottom: 50%;
+    transform: translate(-50%, 50%);
+  }
+  to {
+    bottom: 24px;
+    transform: translateX(-50%);
+  }
+}
