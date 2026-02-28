@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import GraphBackground from './GraphBackground';
-import { analyzeInformation } from '../services/geminiService'; // Importamos el servicio
+import { analyzeInformation } from '../services/geminiService';
 import './ResultsPage.css';
 import './HomePage.css';
 
@@ -17,6 +17,24 @@ const CircularProgress = ({ percentage, label }: { percentage: number, label: st
   const radius = 24;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
+// Función auxiliar para guardar en caché
+
+const saveToHistory = (query: string) => {
+  const stored = localStorage.getItem('synapse_history');
+  let history = stored ? JSON.parse(stored) : [];
+  
+  // Evitamos guardar búsquedas vacías o exactamente iguales a la última
+  if (!query || (history.length > 0 && history[0].title === query)) return;
+
+  const newItem = {
+    id: Date.now().toString(),
+    title: query,
+    timestamp: Date.now()
+  };
+  
+  history.unshift(newItem); // Colocamos la búsqueda más reciente al inicio
+  localStorage.setItem('synapse_history', JSON.stringify(history));
+};
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -50,13 +68,12 @@ export default function ResultsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [resultData, setResultData] = useState<AnalysisResult | null>(null);
 
-  // Ejecutamos el análisis cuando el componente carga con una búsqueda inicial
   useEffect(() => {
     const initialQuery = location.state?.query;
     if (initialQuery) {
       executeSearch(initialQuery);
     } else {
-      setIsLoading(false); // Por si entran directamente sin buscar nada
+      setIsLoading(false);
     }
   }, [location.state]);
 
@@ -67,7 +84,6 @@ export default function ResultsPage() {
       setResultData(data);
     } catch (error) {
       console.error("Falló la llamada a la API", error);
-      // Opcional: Manejar el estado de error en UI
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +102,24 @@ export default function ResultsPage() {
       handleSend();
     }
   };
+
+  // --- LÓGICA PARA EXTRAER FUENTES ---
+  // Filtramos los nodos que son 'source' y revisamos cómo se conectan al claim principal.
+  const getSources = (type: 'SUPPORTS' | 'CONTRADICTS') => {
+    if (!resultData) return [];
+    
+    // 1. Encontrar los IDs de los enlaces (links) del tipo deseado
+    const linksOfType = resultData.graph.links.filter(link => link.type === type);
+    const sourceIds = linksOfType.map(link => link.source);
+
+    // 2. Buscar los labels (nombres) de los nodos que coinciden con esos IDs
+    return resultData.graph.nodes
+      .filter(node => node.type === 'source' && sourceIds.includes(node.id))
+      .map(node => node.label);
+  };
+
+  const supportingSources = getSources('SUPPORTS');
+  const contradictingSources = getSources('CONTRADICTS');
 
   return (
     <div className="home-container results-container">
@@ -110,7 +144,7 @@ export default function ResultsPage() {
       <main className="results-main">
         <div className="content-grid">
           
-          <section className="summary-section" style={{ zIndex: 1, backgroundColor: 'rgba(255,255,255,0.85)', padding: '20px', borderRadius: '16px', backdropFilter: 'blur(10px)' }}>
+          <section className="summary-section" style={{ zIndex: 1, backgroundColor: 'rgba(255,255,255,0.85)', padding: '20px', borderRadius: '16px', backdropFilter: 'blur(10px)', overflowY: 'auto' }}>
             <h2 className="summary-title">Summary</h2>
             
             {isLoading ? (
@@ -140,6 +174,38 @@ export default function ResultsPage() {
                     ))}
                   </ul>
                 </div>
+
+                {/* --- NUEVA SECCIÓN DE FUENTES (EXTRAÍDAS DEL GRAFO) --- */}
+                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <h3 style={{ color: '#10B981', marginBottom: '8px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 13l4 4L19 7"></path></svg>
+                      Fuentes a favor
+                    </h3>
+                    {supportingSources.length > 0 ? (
+                      <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0, fontSize: '0.9rem' }}>
+                        {supportingSources.map((source, i) => <li key={i}>{source}</li>)}
+                      </ul>
+                    ) : (
+                      <p style={{ fontSize: '0.9rem', color: '#9CA3AF' }}>No se encontraron fuentes de apoyo explícitas.</p>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <h3 style={{ color: '#EF4444', marginBottom: '8px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      Fuentes en contra
+                    </h3>
+                    {contradictingSources.length > 0 ? (
+                      <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0, fontSize: '0.9rem' }}>
+                        {contradictingSources.map((source, i) => <li key={i}>{source}</li>)}
+                      </ul>
+                    ) : (
+                      <p style={{ fontSize: '0.9rem', color: '#9CA3AF' }}>No se encontraron fuentes de contradicción explícitas.</p>
+                    )}
+                  </div>
+                </div>
+
                 <div>
                   <h3 style={{ color: '#4A9EFF', marginBottom: '8px', fontSize: '1.2rem' }}>Related Topics</h3>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -196,6 +262,14 @@ export default function ResultsPage() {
               rows={1}
             />
             <div className="input-actions">
+              <button className="icon-btn" aria-label="Voice input">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" y1="19" x2="12" y2="23" />
+                  <line x1="8" y1="23" x2="16" y2="23" />
+                </svg>
+              </button>
               <button className="icon-btn send-btn" onClick={handleSend} aria-label="Send message">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="22" y1="2" x2="11" y2="13" />

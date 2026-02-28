@@ -20,6 +20,24 @@ export default function HomePage() {
     }
   };
 
+  // Función auxiliar para guardar en caché
+  const saveToHistory = (query: string) => {
+  const stored = localStorage.getItem('synapse_history');
+  let history = stored ? JSON.parse(stored) : [];
+  
+  // Evitamos guardar búsquedas vacías o exactamente iguales a la última
+  if (!query || (history.length > 0 && history[0].title === query)) return;
+
+  const newItem = {
+    id: Date.now().toString(),
+    title: query,
+    timestamp: Date.now()
+  };
+  
+  history.unshift(newItem); // Colocamos la búsqueda más reciente al inicio
+  localStorage.setItem('synapse_history', JSON.stringify(history));
+};
+
   const handleSend = () => {
     if (!message.trim()) return;
     if (!isValidUrl(message.trim())) {
@@ -30,6 +48,7 @@ export default function HomePage() {
     }
     setError('');
     console.log('Sending:', message);
+    saveToHistory(message.trim());
     setMessage('');
     navigate('/results', { state: { query: message.trim() } });
   };
