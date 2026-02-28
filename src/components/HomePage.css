@@ -126,3 +126,14 @@
 .send-btn:hover {
   color: #3693FF;
 }
+
+.home-footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 12px;
+  color: #B5B5B5;
+}
+
+.home-footer .highlight {
+  color: #4A9EFF;
+}

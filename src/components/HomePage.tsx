@@ -79,6 +79,10 @@ export default function HomePage() {
           </div>
         </div>
       </main>
+      
+      <footer className="home-footer">
+        <span>Syn<span className="highlight">{'{app}'}</span>se © 2025</span>
+      </footer>
     </div>
   );
 }

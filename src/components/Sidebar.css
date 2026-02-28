@@ -1,21 +1,20 @@
 .sidebar-overlay-menu {
   position: fixed;
   top: 0;
-  left: -300px; /* Oculto por defecto */
+  left: -300px;
   width: 260px;
   height: 100vh;
-  background-color: #4A9EFF;
+  background-color: #1a3a5c;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 24px 16px;
-  gap: 32px;
+  padding: 16px 12px;
+  gap: 16px;
   transition: left 0.3s ease-in-out;
   z-index: 1000;
 }
 
 .sidebar-overlay-menu.open {
-  left: 0; /* Aparece suavemente */
+  left: 0;
 }
 
 .sidebar-overlay {
@@ -27,4 +26,102 @@
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 999;
   backdrop-filter: blur(2px);
+}
+
+.new-research-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #4A9EFF;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.new-research-btn:hover {
+  background-color: #3a8eef;
+}
+
+.new-research-btn span {
+  font-size: 18px;
+}
+
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-date {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.history-item {
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item:hover {
+  background-color: rgba(74, 158, 255, 0.2);
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  height: 55px;
+  overflow: hidden;
+}
+
+.sidebar-logo img {
+  height: 150px;
+  margin-top: -19%;
+  margin-bottom: -19%;
+}
+
+.sidebar-copyright {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 8px;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.sidebar-copyright .highlight {
+  color: #4A9EFF;
 }
