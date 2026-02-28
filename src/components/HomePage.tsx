@@ -10,7 +10,18 @@ export default function HomePage() {
   const [error, setError] = useState('');
   const [shake, setShake] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [maxConnections, setMaxConnections] = useState(0);
+  const [won, setWon] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
   const navigate = useNavigate();
+
+  const handleConnectionChange = (max: number) => {
+    setMaxConnections(max);
+    if (max >= 50 && !won) {
+      setWon(true);
+      setShowCongrats(true);
+    }
+  };
 
   const isValidUrl = (str: string) => {
     try {
@@ -67,7 +78,14 @@ export default function HomePage() {
 
   return (
     <div className="home-container">
-      <GraphBackground />
+      <GraphBackground onMaxConnectionsChange={handleConnectionChange} nodeCount={won ? 300 : 100} />
+      <div className="graph-stat">{maxConnections}</div>
+      {showCongrats && (
+        <div className="congrats-message" onClick={() => setShowCongrats(false)}>
+          🎉 Congratulations! You reached 50 connections!
+          <span className="dismiss-hint">Click to dismiss</span>
+        </div>
+      )}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <header className="header">

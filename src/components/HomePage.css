@@ -188,3 +188,46 @@
     transform: translateX(-50%);
   }
 }
+
+.graph-stat {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(74, 158, 255, 0.1);
+  color: #4A9EFF;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 10;
+}
+
+.congrats-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(74, 158, 255, 0.95);
+  color: white;
+  padding: 24px 48px;
+  border-radius: 16px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  z-index: 100;
+  animation: popIn 0.3s ease-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.dismiss-hint {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+@keyframes popIn {
+  from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}

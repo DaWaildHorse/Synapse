@@ -23,6 +23,11 @@ interface AnalysisResult {
   metrics: { veracity: number; agree: number; disagree: number; neutral: number; };
 }
 
+const CircularProgress = ({ percentage, label }: { percentage: number, label: string }) => {
+  const radius = 24;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+// Función auxiliar para guardar en caché
 type LeftPanel = 'analysis' | 'node';
 
 const TYPE_COLOR: Record<string, string> = {
