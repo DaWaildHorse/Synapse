@@ -1,5 +1,5 @@
 // src/Graph/hooks/useForce.ts
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import type { GraphNode, GraphLink } from "../types/graph";
 
@@ -8,8 +8,7 @@ export function useForceSimulation(
   links: GraphLink[],
   width: number,
   height: number,
-  onTick: () => void,
-  svgRef: RefObject<SVGSVGElement | null>
+  onTick: () => void
 ) {
   const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null);
 
