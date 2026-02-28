@@ -71,7 +71,7 @@ const Graph: React.FC<GraphProps> = ({ nodes, links, width = 1000, height = 800,
     node.fy = y - offsetY;
   }, [clientToLocal]);
 
-  const handleSvgPointerUp = useCallback((e: React.PointerEvent) => {
+  const handleSvgPointerUp = useCallback(( ) => {
     if (!draggingRef.current) return;
     const { node, moved } = draggingRef.current;
     const sim = simulationRef.current;

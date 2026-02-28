@@ -33,7 +33,7 @@ const Node: React.FC<NodeProps> = ({
       <circle
         r={r}
         fill={getNodeColor(node.type)}
-        stroke="#1e293b"
+        stroke="#4A9EFF"
         strokeWidth={1.5}
       />
 
@@ -42,8 +42,8 @@ const Node: React.FC<NodeProps> = ({
         y={r + 11}
         textAnchor="middle"
         fontSize={9}
-        fill="#e2e8f0"
-        stroke="#0f172a"
+        fill="#4A4A4A"
+        stroke="#FFFFFF"
         strokeWidth={2.5}
         paintOrder="stroke"
         style={{ pointerEvents: "none", userSelect: "none" }}

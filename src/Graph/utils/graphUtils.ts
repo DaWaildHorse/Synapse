@@ -3,13 +3,13 @@ import type { NodeType, LinkType, GraphNode } from "../types/graph";
 export function getNodeColor(type: NodeType): string {
   switch (type) {
     case "claim":
-      return "#1F77B4"; // Blue for main claims
+      return "#4A9EFF"; // Primary blue
     case "source":
-      return "#FF7F0E"; // Orange for sources (contrasting)
+      return "#10B981"; // Green for sources
     case "entity":
-      return "#2CA02C"; // Green for entities
+      return "#f59e0b"; // Amber for entities
     default:
-      return "#92E0A9"; // Soft teal for other / unknown
+      return "#B5B5B5"; // Gray fallback
   }
 }
 
@@ -29,14 +29,14 @@ export function getNodeSize(node: GraphNode): number {
 export function getLinkColor(type: LinkType): string {
   switch (type) {
     case "SUPPORTS":
-      return "#2CA02C"; // Green for supporting links
+      return "#10B981"; // Green for supporting links
     case "CONTRADICTS":
-      return "#D62728"; // Red for contradiction
+      return "#EF4444"; // Red for contradiction
     case "MAKES":
-      return "#1F77B4"; // Blue for claims / neutral links
+      return "#4A9EFF"; // Primary blue for claims
     case "MENTIONS":
-      return "#94A3B8"; // Gray for references
+      return "#B5B5B5"; // Gray for references
     default:
-      return "#ccc"; // fallback
+      return "#D9D9D9"; // Light gray fallback
   }
 }

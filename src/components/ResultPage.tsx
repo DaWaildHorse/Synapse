@@ -112,6 +112,19 @@ export default function ResultsPage() {
   const [notes,         setNotes]         = useState<Record<string, string>>({});
 
   const detailCache = useRef<Map<string, NodeDetail>>(new Map());
+  const graphContainerRef = useRef<HTMLDivElement>(null);
+  const [graphSize, setGraphSize] = useState({ width: 500, height: 400 });
+
+  // Measure graph container
+  useEffect(() => {
+    const el = graphContainerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setGraphSize({ width: entry.contentRect.width, height: entry.contentRect.height });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // ── Run search ─────────────────────────────────────────────────────────────
 
@@ -341,11 +354,8 @@ export default function ResultsPage() {
                   {/* Header */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ width: 12, height: 12, borderRadius: '50%', flexShrink: 0, background: TYPE_COLOR[selectedNode.type] ?? '#999', display: 'inline-block' }} />
-                    <h2 className="text-2xl font-bold m-0" style={{ color: '#f1f5f9' }}>{selectedNode.label}</h2>
-                    <span
-                      className="ml-auto text-xs font-semibold tracking-widest uppercase rounded-full px-3 py-1"
-                      style={{ color: TYPE_COLOR[selectedNode.type] ?? '#999', background: 'rgba(255,255,255,0.1)' }}
-                    >
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#4A4A4A' }}>{selectedNode.label}</h2>
+                    <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', borderRadius: 16, padding: '4px 12px', color: TYPE_COLOR[selectedNode.type] ?? '#999', background: 'rgba(74,158,255,0.1)' }}>
                       {selectedNode.type}
                     </span>
                   </div>
@@ -353,66 +363,69 @@ export default function ResultsPage() {
                   {/* Confidence bar */}
                   {selectedNode.type === 'claim' && selectedNode.confidence !== undefined && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="text-xs" style={{ color: '#64748b' }}>Confidence</span>
-                      <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 999, overflow: 'hidden' }}>
+                      <span style={{ fontSize: 12, color: '#B5B5B5' }}>Confidence</span>
+                      <div style={{ flex: 1, height: 6, background: '#E0E0E0', borderRadius: 999, overflow: 'hidden' }}>
                         <div style={{
                           height: '100%', borderRadius: 999,
                           width: `${Math.round(selectedNode.confidence * 100)}%`,
-                          background: selectedNode.confidence > 0.66 ? '#22c55e' : selectedNode.confidence > 0.33 ? '#f59e0b' : '#ef4444',
+                          background: selectedNode.confidence > 0.66 ? '#10B981' : selectedNode.confidence > 0.33 ? '#f59e0b' : '#EF4444',
                         }} />
                       </div>
-                      <span className="text-xs" style={{ color: '#94a3b8', minWidth: 32 }}>{Math.round(selectedNode.confidence * 100)}%</span>
+                      <span style={{ fontSize: 12, color: '#B5B5B5', minWidth: 32 }}>{Math.round(selectedNode.confidence * 100)}%</span>
                     </div>
                   )}
 
                   {/* Loading */}
                   {nodeLoading && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ width: 16, height: 16, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: '#4A9EFF', animation: 'spin 0.8s linear infinite', flexShrink: 0 }} />
-                      <span className="text-sm" style={{ color: '#9CA3AF' }}>Fetching details…</span>
+                      <div style={{ width: 16, height: 16, borderRadius: '50%', border: '2px solid #E0E0E0', borderTopColor: '#4A9EFF', animation: 'spin 0.8s linear infinite', flexShrink: 0 }} />
+                      <span style={{ fontSize: 14, color: '#B5B5B5' }}>Fetching details…</span>
                       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                     </div>
                   )}
 
                   {/* Error */}
                   {nodeError && (
-                    <div style={{ padding: '10px 14px', background: '#450a0a', borderRadius: 8, border: '1px solid #7f1d1d' }}>
-                      <p className="text-sm m-0" style={{ color: '#fca5a5' }}>{nodeError}</p>
+                    <div style={{ padding: '10px 14px', background: 'rgba(239,68,68,0.1)', borderRadius: 8, border: '1px solid rgba(239,68,68,0.3)' }}>
+                      <p style={{ margin: 0, fontSize: 14, color: '#EF4444' }}>{nodeError}</p>
                     </div>
                   )}
 
                   {/* Detail content */}
                   {nodeDetail && (
                     <>
-                      <Section title="Summary">
-                        <p className="text-base leading-relaxed m-0" style={{ color: '#cbd5e1' }}>{nodeDetail.summary}</p>
-                      </Section>
-                      <Section title="Details">
-                        <p className="text-base leading-relaxed m-0" style={{ color: '#94a3b8' }}>{nodeDetail.details}</p>
-                      </Section>
-                      <Section title="Key Facts">
-                        <ul className="m-0 pl-5 flex flex-col gap-2">
-                          {nodeDetail.keyFacts.map((f, i) => (
-                            <li key={i} className="text-sm leading-relaxed" style={{ color: '#94a3b8' }}>{f}</li>
-                          ))}
+                      <div>
+                        <h3 style={{ color: '#4A9EFF', marginBottom: 8, fontSize: '1.2rem' }}>Summary</h3>
+                        <p style={{ margin: 0, color: '#4A4A4A' }}>{nodeDetail.summary}</p>
+                      </div>
+                      <div>
+                        <h3 style={{ color: '#4A9EFF', marginBottom: 8, fontSize: '1.2rem' }}>Details</h3>
+                        <p style={{ margin: 0, color: '#4A4A4A' }}>{nodeDetail.details}</p>
+                      </div>
+                      <div>
+                        <h3 style={{ color: '#4A9EFF', marginBottom: 8, fontSize: '1.2rem' }}>Key Facts</h3>
+                        <ul style={{ listStyleType: 'disc', paddingLeft: 20, margin: 0, color: '#4A4A4A' }}>
+                          {nodeDetail.keyFacts.map((f, i) => <li key={i} style={{ marginBottom: 4 }}>{f}</li>)}
                         </ul>
-                      </Section>
-                      <Section title="Related Topics">
-                        <div className="flex flex-wrap gap-2">
+                      </div>
+                      <div>
+                        <h3 style={{ color: '#4A9EFF', marginBottom: 8, fontSize: '1.2rem' }}>Related Topics</h3>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                           {nodeDetail.relatedTopics.map((t, i) => (
-                            <span key={i} className="text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' }}>{t}</span>
+                            <span key={i} style={{ backgroundColor: '#E0E0E0', padding: '4px 12px', borderRadius: 16, fontSize: '0.9rem' }}>{t}</span>
                           ))}
                         </div>
-                      </Section>
+                      </div>
                     </>
                   )}
 
                   {/* Personal Notes */}
-                  <Section title="My Notes">
+                  <div>
+                    <h3 style={{ color: '#4A9EFF', marginBottom: 8, fontSize: '1.2rem' }}>My Notes</h3>
                     <div style={{
                       borderRadius: 12,
-                      border: noteFocused ? '1px solid #4A9EFF' : '1px solid rgba(255,255,255,0.1)',
-                      background: 'rgba(0,0,0,0.2)',
+                      border: noteFocused ? '2px solid #4A9EFF' : '2px solid #E0E0E0',
+                      background: 'rgba(255,255,255,0.5)',
                       transition: 'border-color 0.15s',
                       overflow: 'hidden',
                     }}>
@@ -422,31 +435,30 @@ export default function ResultsPage() {
                         onFocus={() => setNoteFocused(true)}
                         onBlur={() => setNoteFocused(false)}
                         placeholder="Write your thoughts on this node…"
-                        rows={5}
+                        rows={4}
                         style={{
                           width: '100%', background: 'transparent', border: 'none', outline: 'none',
                           resize: 'none', padding: '14px 16px', boxSizing: 'border-box',
-                          color: '#e2e8f0', fontSize: 14, lineHeight: 1.7, fontFamily: 'inherit',
+                          color: '#4A4A4A', fontSize: 14, lineHeight: 1.7, fontFamily: 'inherit',
                         }}
                       />
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 14px 10px' }}>
-                        <span className="text-xs" style={{ color: '#475569' }}>
+                        <span style={{ fontSize: 12, color: '#B5B5B5' }}>
                           {wordCount > 0 ? `${wordCount} word${wordCount === 1 ? '' : 's'}` : ''}
                         </span>
                         {currentNote.trim() !== '' && (
                           <button
                             onClick={() => setNotes(prev => ({ ...prev, [selectedNode.id]: '' }))}
-                            className="text-xs transition-colors"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#475569' }}
-                            onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                            onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: 12, color: '#B5B5B5' }}
+                            onMouseEnter={e => (e.currentTarget.style.color = '#EF4444')}
+                            onMouseLeave={e => (e.currentTarget.style.color = '#B5B5B5')}
                           >
                             Clear
                           </button>
                         )}
                       </div>
                     </div>
-                  </Section>
+                  </div>
 
                 </div>
               )}
@@ -472,6 +484,7 @@ export default function ResultsPage() {
 
             {/* Graph */}
             <div
+              ref={graphContainerRef}
               className="graph-container"
               style={{ backgroundColor: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', position: 'relative', overflow: 'hidden' }}
             >
@@ -481,8 +494,8 @@ export default function ResultsPage() {
                 <Graph
                   nodes={graphNodes}
                   links={graphLinks}
-                  width={undefined}   // will use container width via CSS
-                  height={undefined}  // will use container height via CSS
+                  width={graphSize.width}
+                  height={graphSize.height}
                   onNodeClick={handleNodeClick}
                 />
               ) : (
