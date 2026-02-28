@@ -16,8 +16,8 @@ const App: React.FC = () => {
   const links: GraphLink[] = [
     { source: "sourceA", target: "claim1", type: "MAKES" },
     { source: "sourceB", target: "claim2", type: "MAKES" },
-    { source: "claim1", target: "entity1", type: "MENTIONS" },
-    { source: "claim2", target: "entity1", type: "MENTIONS" },
+    { source: "claim1", target: "entity1", type: "SUPPORTS" },
+    { source: "claim2", target: "entity1", type: "CONTRADICTS" },
     { source: "claim1", target: "claim2", type: "CONTRADICTS" },
   ];
 

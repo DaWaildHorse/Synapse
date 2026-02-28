@@ -3,33 +3,40 @@ import type { NodeType, LinkType, GraphNode } from "../types/graph";
 export function getNodeColor(type: NodeType): string {
   switch (type) {
     case "claim":
-      return "#3b82f6"; // blue
+      return "#1F77B4"; // Blue for main claims
     case "source":
-      return "#10b981"; // green
+      return "#FF7F0E"; // Orange for sources (contrasting)
     case "entity":
-      return "#f59e0b"; // amber
+      return "#2CA02C"; // Green for entities
     default:
-      return "#999";
+      return "#92E0A9"; // Soft teal for other / unknown
   }
 }
 
 export function getNodeSize(node: GraphNode): number {
-  if (node.type === "claim") return 12;
-  if (node.type === "source") return 10;
-  return 6;
+  switch (node.type) {
+    case "claim":
+      return 12;
+    case "source":
+      return 10;
+    case "entity":
+      return 8;
+    default:
+      return 6;
+  }
 }
 
 export function getLinkColor(type: LinkType): string {
   switch (type) {
     case "SUPPORTS":
-      return "#22c55e"; // green
+      return "#2CA02C"; // Green for supporting links
     case "CONTRADICTS":
-      return "#ef4444"; // red
+      return "#D62728"; // Red for contradiction
     case "MAKES":
-      return "#94a3b8"; // gray
+      return "#1F77B4"; // Blue for claims / neutral links
     case "MENTIONS":
-      return "#cbd5e1"; // light gray
+      return "#94A3B8"; // Gray for references
     default:
-      return "#ccc";
+      return "#ccc"; // fallback
   }
 }
