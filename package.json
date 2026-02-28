@@ -11,17 +11,23 @@
   },
   "dependencies": {
     "@google/genai": "^1.43.0",
+<<<<<<< HEAD
     "@tailwindcss/vite": "^4.2.1",
     "d3": "^7.9.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.2.1"
+=======
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.13.1"
+>>>>>>> main
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/d3": "^7.4.3",
     "@types/node": "^24.10.1",
-    "@types/react": "^19.2.7",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
