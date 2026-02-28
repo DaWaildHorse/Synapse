@@ -23,7 +23,7 @@ export default function HomePage() {
       <header className="header">
         <div className="header-left">
           <button className="icon-btn menu-btn" aria-label="Menu">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A9EFF" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
@@ -37,7 +37,7 @@ export default function HomePage() {
       </header>
 
       <main className="main-content">
-        <h1 className="main-title">Welcome to Syn{'{app}'}se!</h1>
+        <h1 className="main-title"><span>Welcome to Syn</span><span className="highlight">{'{app}'}</span><span>se!</span></h1>
         <p className="subtitle">Less noise, more truth</p>
 
         <div className="input-container">

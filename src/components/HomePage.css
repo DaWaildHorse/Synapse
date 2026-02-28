@@ -20,8 +20,14 @@
   gap: 12px;
 }
 
+.app-logo {
+  height: 50px;
+  overflow: hidden;
+}
+
 .app-logo img {
   height: 128px;
+  margin-top: -19%;
 }
 
 .icon-btn {
@@ -51,15 +57,19 @@
 }
 
 .main-title {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 600;
   margin: 0;
   text-align: center;
+  color: #B5B5B5;
+}
+
+.main-title .highlight {
   color: #4A9EFF;
 }
 
 .subtitle {
-  font-size: 1rem;
+  font-size: 1.5rem;
   margin: 0 0 24px 0;
   text-align: center;
   color: #B5B5B5;
