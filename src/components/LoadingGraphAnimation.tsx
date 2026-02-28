@@ -10,7 +10,19 @@ interface Node {
   opacity: number;
   ttl: number;
   createdAt: number;
+  color: string;
 }
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+const getColorByPosition = (x: number, y: number): string => {
+  const t = (x / 300 + y / 200) / 2; // 0 = top-left, 1 = bottom-right
+  const colors = [[74, 255, 127], [74, 158, 255], [158, 74, 255]]; // green, blue, purple
+  const idx = Math.min(t * 2, 1.999);
+  const i = Math.floor(idx);
+  const [r, g, b] = colors[i].map((c, j) => Math.round(lerp(c, colors[i + 1][j], idx - i)));
+  return `rgb(${r},${g},${b})`;
+};
 
 const PROXIMITY_THRESHOLD = 80;
 const MAX_CONNECTIONS = 3;
@@ -22,16 +34,19 @@ export default function LoadingGraphAnimation() {
 
   useEffect(() => {
     const spawnNode = () => {
+      const x = Math.random() * 280 + 10;
+      const y = Math.random() * 180 + 10;
       const newNode: Node = {
         id: nodeIdRef.current++,
-        x: Math.random() * 280 + 10,
-        y: Math.random() * 180 + 10,
+        x,
+        y,
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
         size: Math.random() * 12 + 6,
         opacity: 0,
         ttl: Math.random() * 5000 + 5000,
         createdAt: Date.now(),
+        color: getColorByPosition(x, y),
       };
 
       setNodes(prev => [...prev, newNode]);
@@ -102,7 +117,7 @@ export default function LoadingGraphAnimation() {
           key={i}
           x1={`${edge.from.x / 3}%`} y1={`${edge.from.y / 2}%`}
           x2={`${edge.to.x / 3}%`} y2={`${edge.to.y / 2}%`}
-          stroke="#4A9EFF"
+          stroke={edge.from.color}
           strokeWidth="1"
           opacity={Math.min(edge.from.opacity, edge.to.opacity) * 0.5}
         />
@@ -113,7 +128,7 @@ export default function LoadingGraphAnimation() {
           cx={`${node.x / 3}%`}
           cy={`${node.y / 2}%`}
           r={node.size}
-          fill="#4A9EFF"
+          fill={node.color}
           opacity={node.opacity}
           style={{ transition: 'opacity 0.3s' }}
         />
