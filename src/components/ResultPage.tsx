@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import GraphBackground from './GraphBackground';
+import LoadingGraphAnimation from './LoadingGraphAnimation';
 import { analyzeInformation } from '../services/geminiService';
 import './ResultsPage.css';
 import './HomePage.css';
@@ -81,7 +82,6 @@ export default function ResultsPage() {
   const executeSearch = async (query: string) => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 300000)); // 3s delay for animation testing
       const data = await analyzeInformation(query);
       setResultData(data);
     } catch (error) {
@@ -146,8 +146,8 @@ export default function ResultsPage() {
       <main className="results-main">
         <div className="content-grid">
           
-          <section className="summary-section" style={{ zIndex: 1, backgroundColor: 'rgba(255,255,255,0.85)', padding: '20px', borderRadius: '16px', backdropFilter: 'blur(10px)', overflowY: 'auto' }}>
-            <h2 className="summary-title">Summary</h2>
+          <section className="summary-section" style={{ zIndex: 1, backgroundColor: 'rgba(255,255,255,0.1)', padding: '20px', borderRadius: '16px', backdropFilter: 'blur(10px)' }}>
+            <h2 className="summary-title">{isLoading ? 'Searching...' : 'Summary'}</h2>
             
             {isLoading ? (
               <div className="skeleton-text">
@@ -250,14 +250,17 @@ export default function ResultsPage() {
                ) : null}
             </div>
 
-            <div className="graph-container" style={{ backgroundColor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)' }}>
-              <div className="graph-placeholder">
-                 <span style={{ color: '#B5B5B5' }}>
-                   {isLoading ? 'Analizando información con Syn{app}se...' : 
-                    resultData ? `Se extrajeron ${resultData.graph.nodes.length} nodos. [Espacio para renderizar el grafo interactivo]` 
+            <div className="graph-container" style={{ backgroundColor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)', position: 'relative', overflow: 'hidden' }}>
+              {isLoading ? (
+                <LoadingGraphAnimation />
+              ) : (
+                <div className="graph-placeholder">
+                  <span style={{ color: '#B5B5B5' }}>
+                    {resultData ? `Se extrajeron ${resultData.graph.nodes.length} nodos. [Espacio para renderizar el grafo interactivo]`
                     : '[Graph Visualization Area]'}
-                 </span>
-              </div>
+                  </span>
+                </div>
+              )}
             </div>
           </section>
         </div>

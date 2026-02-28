@@ -40,24 +40,25 @@ export default function HomePage() {
 };
 
   const handleSend = () => {
-    if (!message.trim()) return;
-    if (!isValidUrl(message.trim())) {
-      setError('Please enter a valid URL');
-      setShake(true);
-      setTimeout(() => setShake(false), 400);
-      return;
-    }
-    setError('');
-    console.log('Sending:', message);
-    saveToHistory(message.trim());
-    setMessage('');
-    const query = message.trim();
-    setIsExiting(true);
-    setTimeout(() => {
-        navigate('/results', { state: { query } });}, 500);
+      if (!message.trim()) return;
+      if (!isValidUrl(message.trim())) {
+          setError('Please enter a valid URL');
+          setShake(true);
+          setTimeout(() => setShake(false), 400);
+          return;
+      }
+      setError('');
+      console.log('Sending:', message);
+      saveToHistory(message.trim());
+      setMessage('');
+      const query = message.trim();
+      setIsExiting(true);
+      setTimeout(() => {
+          navigate('/results', {state: {query}});
+      }, 500);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
