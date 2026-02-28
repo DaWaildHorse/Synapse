@@ -21,17 +21,16 @@ export function useForceSimulation(
         d3
           .forceLink<GraphNode, GraphLink>(links)
           .id((d) => d.id)
-          .distance(100)
+          .distance(80)
           // Higher link strength so neighbours spring toward the dragged node — key to the Obsidian feel
           .strength(0.8)
       )
       .force("charge", d3.forceManyBody().strength(-350))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide<GraphNode>().radius(32).strength(0.9))
-      // Lower velocityDecay = more momentum / floaty motion (Obsidian default feels ~0.1–0.2)
+      
       .velocityDecay(0.15)
-      // Slower alphaDecay = simulation stays "warm" longer after interactions
-      .alphaDecay(0.02)
+      .alphaDecay(0.01)
       .on("tick", onTick);
 
     simulationRef.current = simulation;
