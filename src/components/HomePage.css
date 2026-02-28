@@ -127,6 +127,24 @@
   color: #3693FF;
 }
 
+.error-message {
+  color: #e53935;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.input-container.shake {
+  animation: shake 0.4s ease-in-out;
+  border-color: #e53935;
+  box-shadow: 0 0 12px rgba(229, 57, 53, 0.4);
+}
+
 .home-footer {
   text-align: center;
   padding: 16px;

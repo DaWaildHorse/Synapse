@@ -7,14 +7,31 @@ import GraphBackground from './GraphBackground';
 export default function HomePage() {
   const [message, setMessage] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [error, setError] = useState('');
+  const [shake, setShake] = useState(false);
   const navigate = useNavigate();
 
-  const handleSend = () => {
-    if (message.trim()) {
-      console.log('Sending:', message);
-      // Pasamos la búsqueda a la vista de resultados
-      navigate('/results', { state: { query: message.trim() } });
+  const isValidUrl = (str: string) => {
+    try {
+      new URL(str);
+      return true;
+    } catch {
+      return false;
     }
+  };
+
+  const handleSend = () => {
+    if (!message.trim()) return;
+    if (!isValidUrl(message.trim())) {
+      setError('Please enter a valid URL');
+      setShake(true);
+      setTimeout(() => setShake(false), 400);
+      return;
+    }
+    setError('');
+    console.log('Sending:', message);
+    setMessage('');
+    navigate('/results', { state: { query: message.trim() } });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -52,11 +69,11 @@ export default function HomePage() {
         <h1 className="main-title"><span>Welcome to Syn</span><span className="highlight">{' {app} '}</span><span>se!</span></h1>
         <p className="subtitle">Less noise, more truth</p>
 
-        <div className="input-container">
+        <div className={`input-container${shake ? ' shake' : ''}`}>
           <textarea
             className="message-input"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => { setMessage(e.target.value); setError(''); }}
             onKeyDown={handleKeyDown}
             placeholder="Paste here your url..."
             rows={1}
@@ -78,6 +95,7 @@ export default function HomePage() {
             </button>
           </div>
         </div>
+        {error && <p className="error-message">{error}</p>}
       </main>
       
       <footer className="home-footer">
