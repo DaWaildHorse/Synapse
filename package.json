@@ -11,17 +11,12 @@
   },
   "dependencies": {
     "@google/genai": "^1.43.0",
-<<<<<<< HEAD
     "@tailwindcss/vite": "^4.2.1",
     "d3": "^7.9.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-router-dom": "^7.13.1",
     "tailwindcss": "^4.2.1"
-=======
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-router-dom": "^7.13.1"
->>>>>>> main
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
