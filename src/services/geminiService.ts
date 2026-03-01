@@ -3,7 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 
 // Asegúrate de tener VITE_GEMINI_API_KEY en tu archivo .env
 const ai = new GoogleGenAI({ 
-  apiKey = "AIzaSyDLQJ_9sQgROEwCPgAZc0YSE4EiyPq2Dbo"
+  apiKey : "AIzaSyDLQJ_9sQgROEwCPgAZc0YSE4EiyPq2Dbo"
 });
 
 export const analyzeInformation = async (urlOrText: string) => {
