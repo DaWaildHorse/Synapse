@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import GraphBackground from './GraphBackground';
 import LoadingGraphAnimation from './LoadingGraphAnimation';
-import { analyzeInformation } from '../services/geminiService';
+import { analyzeInformation, askWithContext } from '../services/geminiService';
 import { getNodeDetail } from '../Graph/services/GeminiGraphService';
 import Graph from '../Graph/components/Graph';
 import type { GraphNode } from '../Graph/types/graph';
@@ -100,6 +100,8 @@ export default function ResultsPage() {
   const [nodeError,     setNodeError]     = useState<string | null>(null);
   const [noteFocused,   setNoteFocused]   = useState(false);
   const [notes,         setNotes]         = useState<Record<string, string>>({});
+  const [chatAnswer,    setChatAnswer]    = useState<string | null>(null);
+  const [chatLoading,   setChatLoading]   = useState(false);
 
   const detailCache = useRef<Map<string, NodeDetail>>(new Map());
   const graphContainerRef = useRef<HTMLDivElement>(null);
@@ -201,8 +203,24 @@ export default function ResultsPage() {
   const supportingSources    = getSources('SUPPORTS');
   const contradictingSources = getSources('CONTRADICTS');
 
-  const handleSend = () => {
-    if (message.trim()) { executeSearch(message.trim()); setMessage(''); }
+  const handleSend = async () => {
+    if (!message.trim()) return;
+    if (resultData) {
+      setChatLoading(true);
+      setChatAnswer(null);
+      try {
+        const answer = await askWithContext(
+          message.trim(),
+          `${resultData.analysis.summary} ${resultData.analysis.details}`,
+          resultData.graph.nodes
+        );
+        setChatAnswer(answer);
+      } catch { setChatAnswer('Error generating answer.'); }
+      finally { setChatLoading(false); }
+    } else {
+      executeSearch(message.trim());
+    }
+    setMessage('');
   };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
@@ -500,6 +518,16 @@ export default function ResultsPage() {
 
         {/* Bottom input */}
         <div className="bottom-input-wrapper">
+          {chatAnswer && (
+            <div style={{ maxWidth: 800, width: '100%', margin: '0 auto 12px', padding: '14px 18px', background: 'rgba(74,158,255,0.1)', borderRadius: 12, backdropFilter: 'blur(10px)', color: '#4A4A4A', fontSize: 14, lineHeight: 1.6 }}>
+              <strong style={{ color: '#4A9EFF' }}>Answer:</strong> {chatAnswer}
+            </div>
+          )}
+          {chatLoading && (
+            <div style={{ maxWidth: 800, width: '100%', margin: '0 auto 12px', padding: '14px 18px', background: 'rgba(255,255,255,0.1)', borderRadius: 12, color: '#B5B5B5', fontSize: 14 }}>
+              Thinking...
+            </div>
+          )}
           <div className="input-container" style={{ maxWidth: 800, width: '100%', margin: '0 auto', zIndex: 2 }}>
             <textarea
               className="message-input"

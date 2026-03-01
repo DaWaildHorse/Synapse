@@ -58,3 +58,30 @@ export const analyzeInformation = async (urlOrText: string) => {
     throw error;
   }
 };
+
+export const askWithContext = async (
+  question: string,
+  summary: string,
+  graphNodes: { label: string; type: string }[]
+): Promise<string> => {
+  const nodesContext = graphNodes.map(n => `- ${n.label} (${n.type})`).join('\n');
+  
+  const prompt = `You are a helpful assistant. Answer the user's question based ONLY on the following context.
+
+SUMMARY:
+${summary}
+
+GRAPH ENTITIES:
+${nodesContext}
+
+USER QUESTION: ${question}
+
+Provide a concise, helpful answer. If the question cannot be answered from the context, say so.`;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+  });
+
+  return response.text || 'No response generated.';
+};
