@@ -138,7 +138,6 @@ cd synapse
 npm install
 
 # 3. Set up environment variables
-cp .env.example .env
 # Then edit .env and add your Gemini API key (see below)
 
 # 4. Start the dev server
@@ -146,14 +145,6 @@ npm run dev
 ```
 
 The app will be available at `http://localhost:5173`.
-
-### Build for production
-
-```bash
-npm run build
-npm run preview   # preview the production build locally
-```
-
 ---
 
 ## Environment Variables
