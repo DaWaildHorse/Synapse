@@ -43,7 +43,7 @@ export const analyzeInformation = async (urlOrText: string) => {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json", // ¡Esto fuerza el JSON!
